@@ -80,3 +80,6 @@ yarn-error.log
 
 # Ignorar a pasta dados e todo conteúdo
 app/knowledge/
+
+# Dicas não commitar
+processo.txt
