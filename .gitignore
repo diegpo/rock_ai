@@ -1,0 +1,82 @@
+# 🔐 Variáveis de ambiente (NUNCA subir isso)
+.env
+.env.*
+*.env
+
+# 🐍 Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 🧪 Ambiente virtual
+venv/
+env/
+ENV/
+.venv/
+
+# 📦 Dependências locais
+pip-log.txt
+pip-delete-this-directory.txt
+
+# 🗄️ Banco de dados
+*.sqlite3
+*.db
+
+# 🧾 Logs
+*.log
+logs/
+*.out
+
+# ⚙️ Arquivos do Flask
+instance/
+.webassets-cache
+
+# 🧠 IA / Modelos / Cache
+models/
+*.bin
+*.pt
+*.gguf
+*.ckpt
+*.safetensors
+
+# 🤖 Ollama (se estiver salvando local)
+ollama.log
+
+# 🔑 Tokens / chaves
+secrets.json
+credentials.json
+
+# 🖥️ VSCode
+.vscode/
+
+# 🐧 Sistema Linux
+*~
+.cache/
+.local/
+
+# 🗂️ Arquivos temporários
+tmp/
+temp/
+
+# 📦 Build / dist
+dist/
+build/
+*.egg-info/
+
+# 🧪 Testes / coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# 🧵 Node (caso use frontend junto)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# 📸 Arquivos grandes opcionais (ajuste se precisar)
+*.zip
+*.tar.gz
+*.rar
+
+# Ignorar a pasta dados e todo conteúdo
+app/knowledge/

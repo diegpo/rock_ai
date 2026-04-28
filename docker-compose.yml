@@ -1,0 +1,82 @@
+services:
+  rocks:
+    build: .
+    container_name: rocks_app
+    volumes:
+      - ./app:/app
+      - ./app/knowledge:/app/knowledge
+    env_file:
+      - .env
+    stdin_open: true
+    tty: true
+    depends_on:
+      ollama:
+        condition: service_healthy   # ← aguarda ollama estar pronto de verdade
+    ports:
+      - "5000:5000"
+      - "6000:6000"
+    networks:
+      - rock-net
+
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+      - ./entrypoint.sh:/entrypoint.sh
+    entrypoint: ["/entrypoint.sh"]
+    dns:
+      - 1.1.1.1      # ← DNS explícito, ignora o DNS alterado pelo WARP no host
+      - 8.8.8.8
+    networks:
+      - rock-net
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 10s
+      retries: 15
+      start_period: 60s
+    # Se tiver GPU NVIDIA, descomente:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - capabilities: [gpu]
+
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: chromadb
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+    networks:
+      - rock-net
+
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: ngrok
+    command: http rocks_app:6000
+    environment:
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
+    ports:
+      - "4040:4040"
+    depends_on:
+      - rocks
+    networks:
+      - rock-net
+
+networks:
+  rock-net:
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: "1280"   # ← MTU compatível com WARP (usa 1280)
+    ipam:
+      config:
+        - subnet: "192.168.90.0/24"           # ← subnet fora do range do WARP
+
+volumes:
+  ollama_data:
+  chroma_data:

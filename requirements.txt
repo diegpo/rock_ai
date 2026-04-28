@@ -1,0 +1,18 @@
+# Interface e servidor
+flask
+python-dotenv
+requests
+rich
+
+# RAG - Base de conhecimento Protheus
+chromadb
+langchain
+langchain-community
+sentence-transformers
+
+# Leitura de documentos
+pypdf
+python-docx
+
+# Slack (mais robusto que usar Flask puro)
+slack-bolt
