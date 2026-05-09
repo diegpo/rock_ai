@@ -3,36 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rocks</title>
+
+    <title>ROCKS AI</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+
+    <!-- Markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-   <header class="cabecalho container">
-        <img src="{{ url_for('static', filename='img/logo-chatbot.svg') }}" alt="Logo Chatbot">
-        <div class="cabecalho__acoes">
-            
+
+<!-- Header -->
+<header id="top-bar">
+
+    <div class="brand">
+        ⚡ <span>ROCKS AI</span>
+    </div>
+
+    <div class="top-divider"></div>
+
+    <span class="top-label">Modelo</span>
+
+    <select id="model-select">
+        <option>qwen2.5:7b</option>
+    </select>
+
+    <div class="top-divider"></div>
+
+    <div id="status-container">
+        <div id="status-dot"></div>
+        <span id="status-text">Online</span>
+    </div>
+
+</header>
+
+<!-- App -->
+<div id="app">
+
+    <!-- Sidebar -->
+    <aside id="sidebar">
+
+        <div class="sidebar-head">
+            <button id="new-chat-btn">＋ Novo Chat</button>
         </div>
-   </header> 
-   <main class="main">
-        <section class="chat container" id="chat">
-            <p class="chat__bolha chat__bolha--bot">
-                Olá Eu sou o assistente virtual rocks ~<br/><br/>
-                Como posso te ajudar?
-            </p>
-        </section>
-        <section class="entrada container">
-            <div class="entrada__container">
-                <button id="mais_arquivo" aria-label="Bot\Uffffffffde mais op\Uffffffffs">
-                    <i class="icone icone--mais-opcoes"></i>
-                </button>
-                <input type="text" class="entrada__input" placeholder="Enviar uma mensagem" id="input">
-                <button aria-label="Bot\Uffffffffde enviar" id="botao-enviar">
-                    <i class="icone icone--enviar-mensagem"></i>
-                </button>
+
+        <div id="chat-list">
+
+            <div class="chat-item active">
+                <span class="chat-icon">💬</span>
+                <span class="chat-title">Conversa Atual</span>
             </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- Main -->
+    <main id="main">
+
+        <!-- Chat -->
+        <section id="chat-box">
+
+            <div class="welcome">
+                <h2>ROCKS AI</h2>
+                <p>
+                    Olá! Eu sou seu assistente virtual.<br>
+                    Como posso ajudar hoje?
+                </p>
+            </div>
+
         </section>
-   </main>
-</body>
+
+
+        <!-- Input -->
+        <section id="input-zone">
+
+            <div class="input-row">
+
+                <button id="attach-btn">📎</button>
+
+                <textarea
+                    id="msg-input"
+                    rows="1"
+                    placeholder="Digite sua mensagem..."
+                ></textarea>
+
+                <button id="send-btn">
+                    Enviar ➤
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- Scripts -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+
+</body>
 </html>

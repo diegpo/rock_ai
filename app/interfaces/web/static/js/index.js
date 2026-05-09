@@ -1,21 +1,28 @@
-const chat = document.querySelector('#chat');
-const input = document.querySelector('#input');
-const botaoEnviar = document.querySelector('#botao-enviar');
+const chatBox = document.querySelector('#chat-box');
+const input = document.querySelector('#msg-input');
+const botaoEnviar = document.querySelector('#send-btn');
 
 let imagemSelecionada = null;
-let botaoAnexo = document.querySelector("#mais_arquivo");
+
+const botaoAnexo = document.querySelector('#attach-btn');
+
 let miniaturaImagem = null;
+
 
 // ==========================
 // 📎 Upload de imagem
 // ==========================
 async function pegarImagem() {
+
     let fileInput = document.createElement("input");
+
     fileInput.type = "file";
     fileInput.accept = "image/*";
 
     fileInput.onchange = async e => {
+
         if (miniaturaImagem) {
+
             miniaturaImagem.remove();
             miniaturaImagem = null;
         }
@@ -25,17 +32,23 @@ async function pegarImagem() {
         if (!imagemSelecionada) return;
 
         miniaturaImagem = document.createElement('img');
+
         miniaturaImagem.src = URL.createObjectURL(imagemSelecionada);
-        miniaturaImagem.style.maxWidth = '3rem';
-        miniaturaImagem.style.maxHeight = '3rem';
-        miniaturaImagem.style.margin = '0.5rem';
+
+        miniaturaImagem.style.maxWidth = '70px';
+        miniaturaImagem.style.maxHeight = '70px';
+        miniaturaImagem.style.borderRadius = '10px';
+        miniaturaImagem.style.marginBottom = '10px';
+        miniaturaImagem.style.border = '1px solid #30363d';
 
         document
-            .querySelector('.entrada__container')
-            .insertBefore(miniaturaImagem, input);
+            .querySelector('#input-zone')
+            .prepend(miniaturaImagem);
 
         try {
+
             let formData = new FormData();
+
             formData.append('imagem', imagemSelecionada);
 
             const response = await fetch('/upload_imagem', {
@@ -44,113 +57,215 @@ async function pegarImagem() {
             });
 
             const resposta = await response.text();
-            console.log("Upload:", resposta);
+
+            console.log("📎 Upload:", resposta);
 
         } catch (erro) {
-            console.error("Erro ao enviar imagem:", erro);
+
+            console.error("❌ Erro upload:", erro);
         }
     };
 
     fileInput.click();
 }
 
+
 // ==========================
 // 💬 Enviar mensagem
 // ==========================
 async function enviarMensagem() {
+
     const mensagem = input.value.trim();
+
     if (!mensagem) return;
 
+    removerWelcome();
+
+    adicionarMensagemUsuario(mensagem);
+
     input.value = "";
+
+    autoResize();
+
     input.focus();
 
-    // Remove miniatura se existir
+    // Remove miniatura
     if (miniaturaImagem) {
+
         miniaturaImagem.remove();
+
         miniaturaImagem = null;
         imagemSelecionada = null;
     }
 
-    // 🧑 Usuário
-    const bolhaUsuario = criaBolhaUsuario();
-    bolhaUsuario.innerHTML = mensagem;
-    chat.appendChild(bolhaUsuario);
+    // 🤖 typing
+    const typing = criarTyping();
 
-    // 🤖 Bot
-    const bolhaBot = criaBolhaBot();
-    chat.appendChild(bolhaBot);
+    chatBox.appendChild(typing);
 
     vaiParaFinalDoChat();
 
-    // 🔄 Animação "pensando"
-    let estados = ["Pensando...", "Processando...", "Quase lá..."];
-    let indice = 0;
-
-    bolhaBot.innerHTML = estados[0];
-
-    const intervaloAnimacao = setInterval(() => {
-        indice = (indice + 1) % estados.length;
-        bolhaBot.innerHTML = estados[indice];
-    }, 500);
-
     try {
+
         const resposta = await fetch("/chat", {
+
             method: "POST",
+
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ message: mensagem }),
+
+            body: JSON.stringify({
+                message: mensagem
+            }),
         });
 
         const data = await resposta.json();
 
-        clearInterval(intervaloAnimacao);
+        typing.remove();
 
-        bolhaBot.innerHTML = data.response.replace(/\n/g, '<br>');
+        adicionarMensagemBot(data.response);
 
     } catch (erro) {
-        clearInterval(intervaloAnimacao);
 
-        bolhaBot.innerHTML = "⚠️ Erro ao conectar com o servidor";
+        typing.remove();
+
+        adicionarMensagemBot(
+            "⚠️ Erro ao conectar com o servidor."
+        );
+
         console.error("Erro:", erro);
     }
 
     vaiParaFinalDoChat();
 }
 
+
 // ==========================
-// 💡 Criadores de bolha
+// 👤 Usuário
 // ==========================
-function criaBolhaUsuario() {
-    let bolha = document.createElement('p');
-    bolha.className = 'chat__bolha chat__bolha--usuario';
-    return bolha;
+function adicionarMensagemUsuario(texto) {
+
+    const mensagem = document.createElement('div');
+
+    mensagem.className = 'message user-message';
+
+    mensagem.innerHTML = `
+        <div class="message-content">
+            ${escapeHtml(texto)}
+        </div>
+    `;
+
+    chatBox.appendChild(mensagem);
 }
 
-function criaBolhaBot() {
-    let bolha = document.createElement('p');
-    bolha.className = 'chat__bolha chat__bolha--bot';
-    return bolha;
+
+// ==========================
+// 🤖 Bot
+// ==========================
+function adicionarMensagemBot(texto) {
+
+    const mensagem = document.createElement('div');
+
+    mensagem.className = 'message bot-message';
+
+    mensagem.innerHTML = `
+        <div class="message-content">
+            ${marked.parse(texto)}
+        </div>
+    `;
+
+    chatBox.appendChild(mensagem);
 }
+
+
+// ==========================
+// ⏳ Typing
+// ==========================
+function criarTyping() {
+
+    const typing = document.createElement('div');
+
+    typing.className = 'message bot-message typing';
+
+    typing.innerHTML = `
+        <div class="message-content">
+            ⏳ ROCKS AI pensando...
+        </div>
+    `;
+
+    return typing;
+}
+
+
+// ==========================
+// 🧹 Remove welcome
+// ==========================
+function removerWelcome() {
+
+    const welcome = document.querySelector('.welcome');
+
+    if (welcome) {
+        welcome.remove();
+    }
+}
+
 
 // ==========================
 // ⬇️ Scroll automático
 // ==========================
 function vaiParaFinalDoChat() {
-    chat.scrollTop = chat.scrollHeight;
+
+    chatBox.scrollTop = chatBox.scrollHeight;
 }
+
+
+// ==========================
+// 🔒 Escape HTML
+// ==========================
+function escapeHtml(text) {
+
+    const div = document.createElement("div");
+
+    div.innerText = text;
+
+    return div.innerHTML;
+}
+
+
+// ==========================
+// 📏 Auto resize textarea
+// ==========================
+function autoResize() {
+
+    input.style.height = "auto";
+
+    input.style.height = (input.scrollHeight) + "px";
+}
+
+input.addEventListener("input", autoResize);
+
+
+// ==========================
+// ⌨️ Enter inteligente
+// ==========================
+input.addEventListener("keydown", function (e) {
+
+    if (e.key === "Enter" && !e.shiftKey) {
+
+        e.preventDefault();
+
+        enviarMensagem();
+    }
+});
+
 
 // ==========================
 // 🎯 Eventos
 // ==========================
 botaoEnviar.addEventListener('click', enviarMensagem);
 
-input.addEventListener("keypress", function (e) {
-    if (e.key === "Enter") {
-        enviarMensagem();
-    }
-});
-
 if (botaoAnexo) {
+
     botaoAnexo.addEventListener('click', pegarImagem);
 }
