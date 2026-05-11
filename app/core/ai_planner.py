@@ -21,7 +21,7 @@ class AiPlanner:
 
         if context:
             prompt = f"""
-Você é um agente especialista em suporte técnico do sistema Protheus (TOTVS).
+Você é um agente especialista em suporte técnico do sistema Cloud Protheus (TOTVS).
 
 BASE DE CONHECIMENTO DISPONÍVEL:
 {context}
