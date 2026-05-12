@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 
 class OllamaProvider:
-    # ✅ NOVO: aceita model como parâmetro (para suportar Qwen e outros)
+    # NOVO: aceita model como parâmetro (para suportar Qwen e outros)
     def __init__(self, model: str = None):
         load_dotenv()
         self.model = model or os.getenv("OLLAMA_MODEL", "gemma4:e2b")
@@ -21,10 +21,10 @@ class OllamaProvider:
             return response.json()["response"]
 
         except requests.exceptions.ConnectionError:
-            return "❌ Ollama não está acessível. Verifique se o container está rodando."
+            return "Ollama não está acessível. Verifique se o container está rodando."
 
         except Exception as e:
-            return f"❌ Erro Ollama: {e}"
+            return f"Erro Ollama: {e}"
 
     def generate(self, prompt: str) -> str:
         return self.ask(prompt)

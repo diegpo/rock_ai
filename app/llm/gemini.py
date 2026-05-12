@@ -16,7 +16,7 @@ class GeminiLLM:
         if not self.api_keys:
             raise ValueError("❌ Nenhuma GEMINI_API_KEY configurada no .env")
 
-        print(f"🌐 Gemini iniciado com {len(self.api_keys)} token(s)")
+        print(f"Gemini iniciado com {len(self.api_keys)} token(s)")
 
     @property
     def current_key(self) -> str:
@@ -26,7 +26,7 @@ class GeminiLLM:
         """Tenta passar pro próximo token. Retorna False se não houver mais."""
         if self.current_index + 1 < len(self.api_keys):
             self.current_index += 1
-            print(f"🔄 Gemini: token {self.current_index} esgotado, usando token {self.current_index + 1}/{len(self.api_keys)}")
+            print(f"Gemini: token {self.current_index} esgotado, usando token {self.current_index + 1}/{len(self.api_keys)}")
             return True
 
         print("❌ Gemini: todos os tokens esgotados")
@@ -79,8 +79,8 @@ class GeminiLLM:
                 break
 
         # Sem tokens disponíveis — fallback para Ollama
-        print("⚠️ Todos os tokens Gemini falharam, use: usar ollama")
-        return "⚠️ Limite de todos os tokens Gemini atingido. Digite 'usar ollama' para continuar."
+        print("Todos os tokens Gemini falharam, use: usar ollama")
+        return "Limite de todos os tokens Gemini atingido. Digite 'usar ollama' para continuar."
 
     def _call(self, prompt: str) -> str | None:
         """Faz a chamada à API com o token atual. Retorna None se falhar por quota."""
@@ -98,22 +98,22 @@ class GeminiLLM:
             )
 
             if self._is_quota_error(response):
-                print(f"⚠️ Token {self.current_index + 1} atingiu o limite de quota")
+                print(f"Token {self.current_index + 1} atingiu o limite de quota")
                 return None
 
             if response.status_code != 200:
-                print(f"⚠️ Gemini erro HTTP {response.status_code}: {response.text[:200]}")
+                print(f"Gemini erro HTTP {response.status_code}: {response.text[:200]}")
                 return None
 
             data = response.json()
             return data["candidates"][0]["content"]["parts"][0]["text"]
 
         except requests.exceptions.Timeout:
-            print(f"⚠️ Token {self.current_index + 1} timeout")
+            print(f"Token {self.current_index + 1} timeout")
             return None
 
         except Exception as e:
-            print(f"⚠️ Gemini erro inesperado: {e}")
+            print(f"Gemini erro inesperado: {e}")
             return None
 
     def ask(self, prompt: str) -> str:
@@ -121,5 +121,5 @@ class GeminiLLM:
 
     def status(self) -> str:
         return (
-            f"🌐 Gemini | Token {self.current_index + 1}/{len(self.api_keys)} ativo"
+            f"Gemini | Token {self.current_index + 1}/{len(self.api_keys)} ativo"
         )

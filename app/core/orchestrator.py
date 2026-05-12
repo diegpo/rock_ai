@@ -9,7 +9,6 @@ class Orchestrator:
     def __init__(self):
         self.llm = LLMProvider()
         self.ai_planner = AiPlanner(self.llm)
-        # ✅ CORRIGIDO: ToolRegistry e IntentMatcher agora são usados
         self.tools = ToolRegistry()
         self.matcher = IntentMatcher()
 

@@ -14,9 +14,9 @@ class LLMProvider:
                 from llm.gemini import GeminiLLM
                 self.llm = GeminiLLM()
                 self.current = "gemini"
-                print("🌐 Provider padrão: Gemini")
+                print("Provider padrão: Gemini")
             except Exception as e:
-                print(f"⚠️ Falha ao iniciar Gemini: {e} — usando Ollama")
+                print(f"Falha ao iniciar Gemini: {e} — usando Ollama")
                 from llm.ollama import OllamaProvider
                 self.llm = OllamaProvider()
                 self.current = "ollama"
@@ -24,7 +24,7 @@ class LLMProvider:
             from llm.ollama import OllamaProvider
             self.llm = OllamaProvider()
             self.current = "ollama"
-            print("🧠 Provider padrão: Ollama (sem chave Gemini no .env)")
+            print("Provider padrão: Ollama (sem chave Gemini no .env)")
 
     def switch(self, provider_name: str) -> str:
         provider_name = provider_name.lower()
@@ -34,16 +34,16 @@ class LLMProvider:
                 from llm.gemini import GeminiLLM
                 self.llm = GeminiLLM()
                 self.current = "gemini"
-                return f"🌐 Agora usando Gemini — {self.llm.status()}"
+                return f"Agora usando Gemini — {self.llm.status()}"
             except Exception as e:
-                return f"❌ Não foi possível iniciar Gemini: {e}"
+                return f"Não foi possível iniciar Gemini: {e}"
 
         elif provider_name == "ollama":
             from llm.ollama import OllamaProvider
             self.llm = OllamaProvider()
             self.current = "ollama"
             model = os.getenv("OLLAMA_MODEL", "qwen2.5:0.5b")
-            return f"🧠 Agora usando Ollama ({model})"
+            return f"Agora usando Ollama ({model})"
 
         elif provider_name in ("qwen", "rapido", "rápido"):
             from llm.ollama import OllamaProvider
@@ -52,7 +52,7 @@ class LLMProvider:
             self.current = "qwen"
             return f"⚡ Agora usando {fast} (modo rápido)"
 
-        return "⚠️ Provider desconhecido. Use: gemini, ollama, qwen"
+        return "Provider desconhecido. Use: gemini, ollama, qwen"
 
     def generate(self, prompt: str) -> str:
         try:
@@ -60,15 +60,15 @@ class LLMProvider:
             return response
 
         except Exception as e:
-            print(f"⚠️ Erro no provider '{self.current}': {e}")
+            print(f"Erro no provider '{self.current}': {e}")
 
             # Fallback automático para Ollama se Gemini falhar completamente
             if self.current == "gemini":
-                print("🔁 Fallback automático para Ollama...")
+                print("Fallback automático para Ollama...")
                 self.switch("ollama")
                 return self.llm.generate(prompt)
 
-            return f"❌ Erro: {e}"
+            return f"Erro: {e}"
 
     def ask(self, prompt: str) -> str:
         return self.generate(prompt)

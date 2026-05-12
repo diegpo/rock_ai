@@ -42,14 +42,14 @@ def wait_ollama():
             if r2.status_code == 200:
 
                 print(f"✅ Ollama ONLINE")
-                print(f"🧠 Modelo ativo: {model}")
+                print(f"Modelo ativo: {model}")
 
                 return
 
         except Exception as e:
 
-            print(f"⏳ Aguardando Ollama... ({i+1}/20)")
-            print(f"⚠️ {e}")
+            print(f"Aguardando Ollama... ({i+1}/20)")
+            print(f"{e}")
 
         time.sleep(3)
 
@@ -59,7 +59,7 @@ def wait_ollama():
 # 🌐 WEB
 def run_web():
 
-    print("🌐 Iniciando Web UI na porta 5000")
+    print("Iniciando Web UI na porta 5000")
 
     web_app.run(
         host="0.0.0.0",
@@ -71,7 +71,7 @@ def run_web():
 # 💬 SLACK
 def run_slack():
 
-    print("📡 Iniciando Slack na porta 6000")
+    print("Iniciando Slack na porta 6000")
 
     slack_app.run(
         host="0.0.0.0",
@@ -82,12 +82,12 @@ def run_slack():
 
 def main():
 
-    print("\n🚀 ROCKS AI")
+    print("\nROCK AI")
     print("=" * 50)
 
     wait_ollama()
 
-    print("\n🧩 Inicializando interfaces...\n")
+    print("\n Inicializando interfaces...\n")
 
     # WEB
     web_thread = threading.Thread(
@@ -110,7 +110,7 @@ def main():
     print("✅ WEB ONLINE  -> http://localhost:5000")
     print("✅ SLACK ONLINE -> porta 6000")
     print("✅ CLI DISPONÍVEL")
-    print("\n🎯 ROCKS AI iniciado com sucesso.")
+    print("\n🎯 ROCK AI iniciado com sucesso.")
     print("🛑 CTRL+C para encerrar.\n")
 
     # Mantém processo vivo

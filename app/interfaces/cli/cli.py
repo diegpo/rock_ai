@@ -55,7 +55,7 @@ def perguntar(mensagem: str) -> str:
             return result.get("response") or result.get("message") or str(result)
         return str(result)
     except Exception as e:
-        return f"❌ Erro interno: {e}"
+        return f"Erro interno: {e}"
 
 AJUDA = """
 [bold red]ROCK'S IA CLI[/bold red] — Comandos disponíveis:
@@ -72,7 +72,7 @@ AJUDA = """
   indexar         → reindexar base de conhecimento Protheus
   sair / exit     → encerrar
 
-[dim]💡 Dica: descreva qualquer erro do Protheus e a IA irá analisar e sugerir solução.[/dim]
+[dim]Dica: descreva qualquer erro do Protheus e a IA irá analisar e sugerir solução.[/dim]
 """
 
 def cmd_ajuda():   console.print(Panel(AJUDA, border_style="red"))
@@ -92,14 +92,14 @@ def cmd_hist():
     console.print(t)
 
 def cmd_indexar():
-    console.print("[dim]📚 Reindexando base de conhecimento...[/dim]")
+    console.print("[dim]Reindexando base de conhecimento...[/dim]")
     try:
         from knowledge.rag_engine import RAGEngine
         rag = RAGEngine()
         n = rag.index_documents()
         console.print(f"[green]✔ {n} chunks indexados com sucesso![/green]")
     except Exception as e:
-        console.print(f"[red]❌ Erro ao indexar: {e}[/red]")
+        console.print(f"[red]Erro ao indexar: {e}[/red]")
 
 COMANDOS = {
     "ajuda":   cmd_ajuda,
@@ -115,13 +115,13 @@ def main():
         try:
             raw = console.input("[bold red]rocks >[/bold red] ").strip()
         except (KeyboardInterrupt, EOFError):
-            console.print("\n👋 Encerrado"); sys.exit(0)
+            console.print("\nEncerrado"); sys.exit(0)
 
         if not raw: continue
         cmd = raw.lower()
 
         if cmd in ("sair", "exit", "quit"):
-            console.print("\n👋 Encerrando..."); break
+            console.print("\nEncerrando..."); break
 
         if cmd in ("cls", "clear"):
             splash(); continue
@@ -134,9 +134,9 @@ def main():
             COMANDOS[cmd](); continue
 
         if len(raw) > MAX_INPUT_LEN:
-            console.print("[yellow]⚠️ Mensagem muito longa[/yellow]"); continue
+            console.print("[yellow]Mensagem muito longa[/yellow]"); continue
 
-        console.print("[dim]⏳ Processando...[/dim]")
+        console.print("[dim]Processando...[/dim]")
         resposta = perguntar(raw)
 
         historico.append({"role": "user",      "content": raw})
@@ -145,7 +145,7 @@ def main():
         log.info(f"AI:   {resposta[:200]}")
 
         try:
-            console.print(Panel(Markdown(resposta), title="🤖 ROCK IA", border_style="magenta"))
+            console.print(Panel(Markdown(resposta), title="ROCK IA", border_style="magenta"))
         except Exception:
             console.print(resposta)
         console.print()

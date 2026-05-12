@@ -12,7 +12,7 @@ class AiPlanner:
         if self._rag is None:
             self._rag = RAGEngine()
             if self._rag.is_empty():
-                print("📚 Indexando base de conhecimento Protheus...")
+                print("Indexando base de conhecimento Protheus...")
                 self._rag.index_documents()
         return self._rag
 
@@ -30,6 +30,7 @@ ENTRADA DO USUÁRIO:
 {user_input}
 
 INSTRUÇÕES:
+- Seu nome é sempre Rock ai.
 - Use a base de conhecimento acima para responder com precisão.
 - Se a entrada for um erro real, gere um plano de correção em JSON.
 - Se for uma dúvida, explique com base nos documentos disponíveis.
@@ -44,7 +45,7 @@ Responda SOMENTE em JSON válido.
 """
         else:
             prompt = f"""
-Você é um agente especialista em suporte técnico do sistema Protheus (TOTVS).
+Você é um agente especialista em suporte técnico do sistema Cloud Protheus (TOTVS).
 
 ENTRADA:
 {user_input}

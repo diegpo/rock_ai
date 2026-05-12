@@ -89,8 +89,8 @@ def slack_rocks():
     user_name = request.form.get("user_name")
     response_url = request.form.get("response_url")
 
-    print(f"👤 Usuário: {user_name}")
-    print(f"💬 Texto: {user_text}")
+    print(f"Usuário: {user_name}")
+    print(f"Texto: {user_text}")
 
     # Validação
     if not user_text or not response_url:
@@ -98,12 +98,12 @@ def slack_rocks():
             "text": "Requisição inválida."
         }), 400
 
-    # 🧠 Processamento IA em background
+    #Processamento IA em background
     def processar():
 
         try:
 
-            print("🧠 Iniciando processamento IA...")
+            print("Iniciando processamento IA...")
 
             inicio = time.time()
 
@@ -111,7 +111,7 @@ def slack_rocks():
 
             fim = time.time()
 
-            print(f"✅ IA respondeu em {fim - inicio:.2f}s")
+            print(f"IA respondeu em {fim - inicio:.2f}s")
 
             nome = formatar_nome(user_name)
 
@@ -134,7 +134,7 @@ def slack_rocks():
             else:
                 resposta_final = resposta_slack
 
-            print("📤 Enviando resposta ao Slack...")
+            print("Enviando resposta ao Slack...")
 
             requests.post(
                 response_url,
@@ -145,11 +145,11 @@ def slack_rocks():
                 timeout=20
             )
 
-            print("✅ Resposta enviada ao Slack")
+            print("Resposta enviada ao Slack")
 
         except Exception as e:
 
-            print("❌ Erro no processamento Slack")
+            print("Erro no processamento Slack")
             traceback.print_exc()
 
             try:
@@ -158,17 +158,17 @@ def slack_rocks():
                     response_url,
                     json={
                         "response_type": "ephemeral",
-                        "text": f"❌ Erro ao processar solicitação: {str(e)}"
+                        "text": f"Erro ao processar solicitação: {str(e)}"
                     },
                     timeout=20
                 )
 
             except Exception as slack_error:
 
-                print("❌ Erro ao responder Slack")
+                print("Erro ao responder Slack")
                 print(slack_error)
 
-    # 🚀 Thread separada
+    #Thread separada
     threading.Thread(
         target=processar,
         daemon=True
@@ -177,11 +177,11 @@ def slack_rocks():
     # ⚡ Resposta imediata ao Slack
     return jsonify({
         "response_type": "ephemeral",
-        "text": "⏳ ROCKS AI processando sua solicitação..."
+        "text": "ROCK AI processando sua solicitação..."
     })
 
 
-# ▶️ Inicialização
+#Inicialização
 if __name__ == "__main__":
 
     app.run(
