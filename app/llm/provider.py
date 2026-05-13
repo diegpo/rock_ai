@@ -6,10 +6,15 @@ load_dotenv()
 
 class LLMProvider:
     def __init__(self):
-        # Tenta iniciar com Gemini, cai para Ollama se não tiver chave
+        default = os.getenv("DEFAULT_PROVIDER", "gemini").lower()
         gemini_keys = os.getenv("GEMINI_API_KEYS", os.getenv("GEMINI_API_KEY", ""))
 
-        if gemini_keys.strip():
+        if default == "ollama" or not gemini_keys.strip():
+            from llm.ollama import OllamaProvider
+            self.llm = OllamaProvider()
+            self.current = "ollama"
+            print("Provider padrão: Ollama")
+        else:
             try:
                 from llm.gemini import GeminiLLM
                 self.llm = GeminiLLM()
@@ -20,15 +25,9 @@ class LLMProvider:
                 from llm.ollama import OllamaProvider
                 self.llm = OllamaProvider()
                 self.current = "ollama"
-        else:
-            from llm.ollama import OllamaProvider
-            self.llm = OllamaProvider()
-            self.current = "ollama"
-            print("Provider padrão: Ollama (sem chave Gemini no .env)")
 
-    def switch(self, provider_name: str) -> str:
+    def switch(self, provider_name: str, url: str = None, model: str = None) -> str:
         provider_name = provider_name.lower()
-
         if provider_name == "gemini":
             try:
                 from llm.gemini import GeminiLLM
@@ -37,21 +36,17 @@ class LLMProvider:
                 return f"Agora usando Gemini — {self.llm.status()}"
             except Exception as e:
                 return f"Não foi possível iniciar Gemini: {e}"
-
         elif provider_name == "ollama":
             from llm.ollama import OllamaProvider
-            self.llm = OllamaProvider()
+            self.llm = OllamaProvider(model=model, url=url)
             self.current = "ollama"
-            model = os.getenv("OLLAMA_MODEL", "qwen2.5:0.5b")
-            return f"Agora usando Ollama ({model})"
-
+            return f"Agora usando Ollama ({self.llm.model})"
         elif provider_name in ("qwen", "rapido", "rápido"):
             from llm.ollama import OllamaProvider
-            fast = os.getenv("OLLAMA_MODEL_FAST", "qwen2.5:0.5b")
-            self.llm = OllamaProvider(model=fast)
+            fast = model or os.getenv("OLLAMA_MODEL_FAST", "qwen2.5:0.5b")
+            self.llm = OllamaProvider(model=fast, url=url)
             self.current = "qwen"
             return f"⚡ Agora usando {fast} (modo rápido)"
-
         return "Provider desconhecido. Use: gemini, ollama, qwen"
 
     def generate(self, prompt: str) -> str:

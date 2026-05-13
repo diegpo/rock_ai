@@ -10,7 +10,7 @@ let miniaturaImagem = null;
 
 
 // ==========================
-// 📎 Upload de imagem
+// Upload de imagem
 // ==========================
 async function pegarImagem() {
 
@@ -71,7 +71,7 @@ async function pegarImagem() {
 
 
 // ==========================
-// 💬 Enviar mensagem
+// Enviar mensagem
 // ==========================
 async function enviarMensagem() {
 
@@ -98,7 +98,7 @@ async function enviarMensagem() {
         imagemSelecionada = null;
     }
 
-    // 🤖 typing
+    //typing
     const typing = criarTyping();
 
     chatBox.appendChild(typing);
@@ -115,9 +115,7 @@ async function enviarMensagem() {
                 "Content-Type": "application/json",
             },
 
-            body: JSON.stringify({
-                message: mensagem
-            }),
+            body: JSON.stringify(buildPayload(mensagem)),  // ✅ inclui URL e modelo
         });
 
         const data = await resposta.json();
@@ -142,7 +140,7 @@ async function enviarMensagem() {
 
 
 // ==========================
-// 👤 Usuário
+// Usuário
 // ==========================
 function adicionarMensagemUsuario(texto) {
 
@@ -161,7 +159,7 @@ function adicionarMensagemUsuario(texto) {
 
 
 // ==========================
-// 🤖 Bot
+// Bot
 // ==========================
 function adicionarMensagemBot(texto) {
 
@@ -180,7 +178,7 @@ function adicionarMensagemBot(texto) {
 
 
 // ==========================
-// ⏳ Typing
+// Typing
 // ==========================
 function criarTyping() {
 
@@ -199,7 +197,7 @@ function criarTyping() {
 
 
 // ==========================
-// 🧹 Remove welcome
+// Remove welcome
 // ==========================
 function removerWelcome() {
 
@@ -212,7 +210,7 @@ function removerWelcome() {
 
 
 // ==========================
-// ⬇️ Scroll automático
+// Scroll automático
 // ==========================
 function vaiParaFinalDoChat() {
 
@@ -221,7 +219,7 @@ function vaiParaFinalDoChat() {
 
 
 // ==========================
-// 🔒 Escape HTML
+// Escape HTML
 // ==========================
 function escapeHtml(text) {
 
@@ -234,7 +232,7 @@ function escapeHtml(text) {
 
 
 // ==========================
-// 📏 Auto resize textarea
+// Auto resize textarea
 // ==========================
 function autoResize() {
 
@@ -247,7 +245,7 @@ input.addEventListener("input", autoResize);
 
 
 // ==========================
-// ⌨️ Enter inteligente
+// Enter inteligente
 // ==========================
 input.addEventListener("keydown", function (e) {
 
@@ -261,7 +259,7 @@ input.addEventListener("keydown", function (e) {
 
 
 // ==========================
-// 🎯 Eventos
+// Eventos
 // ==========================
 botaoEnviar.addEventListener('click', enviarMensagem);
 
@@ -269,3 +267,62 @@ if (botaoAnexo) {
 
     botaoAnexo.addEventListener('click', pegarImagem);
 }
+
+
+// ==========================
+// Ollama — URL e modelos
+// ==========================
+
+// Monta payload com URL e modelo selecionados
+function buildPayload(message) {
+    return {
+        message: message,
+        ollama_url: document.getElementById("ollama-url").value.trim() || null,
+        ollama_model: document.getElementById("model-select").value || null
+    };
+}
+
+// Carrega modelos do Ollama
+async function loadModels(baseUrl = null) {
+    const select = document.getElementById("model-select");
+    const urlInput = document.getElementById("ollama-url");
+
+    try {
+        let url = "/api/models";
+        if (baseUrl) url += `?base_url=${encodeURIComponent(baseUrl)}`;
+
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.models.length === 0) {
+            select.innerHTML = "<option>Nenhum modelo encontrado</option>";
+            return;
+        }
+
+        select.innerHTML = data.models
+            .map(m => `<option value="${m}">${m}</option>`)
+            .join("");
+
+        // Preenche a URL atual
+        if (data.base_url) urlInput.value = data.base_url;
+
+    } catch (e) {
+        select.innerHTML = "<option>Erro ao carregar</option>";
+    }
+}
+
+// Botão 🔄 — recarrega modelos e aplica no backend
+document.getElementById("reload-models").addEventListener("click", async () => {
+    const url = document.getElementById("ollama-url").value.trim();
+    await loadModels(url || null);
+
+    const model = document.getElementById("model-select").value;
+    await fetch("/api/switch", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ollama_url: url, ollama_model: model }),
+    });
+});
+
+// Carrega modelos ao iniciar
+loadModels();

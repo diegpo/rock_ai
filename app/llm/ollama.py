@@ -3,11 +3,16 @@ import os
 from dotenv import load_dotenv
 
 class OllamaProvider:
-    # NOVO: aceita model como parâmetro (para suportar Qwen e outros)
-    def __init__(self, model: str = None):
+    def __init__(self, model: str = None, url: str = None):
         load_dotenv()
-        self.model = model or os.getenv("OLLAMA_MODEL", "gemma4:e2b")
-        self.url = os.getenv("OLLAMA_URL", "http://ollama:11434/api/generate")
+        self.model = model or os.getenv("OLLAMA_MODEL", "qwen2.5:7b")
+        raw_url = url or os.getenv("OLLAMA_URL", "http://localhost:11434/api/generate")
+        
+        # Garante que sempre termina com /api/generate
+        if not raw_url.endswith("/api/generate"):
+            raw_url = raw_url.rstrip("/") + "/api/generate"
+        
+        self.url = raw_url
 
     def ask(self, prompt: str) -> str:
         try:
@@ -21,7 +26,7 @@ class OllamaProvider:
             return response.json()["response"]
 
         except requests.exceptions.ConnectionError:
-            return "Ollama não está acessível. Verifique se o container está rodando."
+            return "Ollama não está acessível. Verifique se q LLM está rodando."
 
         except Exception as e:
             return f"Erro Ollama: {e}"

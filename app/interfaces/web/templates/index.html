@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>ROCK AI</title>
+    <title>rock ai - desenvolvimento</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,15 +22,27 @@
 <header id="top-bar">
 
     <div class="brand">
-         <span>ROCKS AI</span>
+         <span>ROCK AI</span>
     </div>
 
     <div class="top-divider"></div>
 
     <span class="top-label">Modelo</span>
 
+    <div class="top-divider"></div>
+    <span class="top-label">Ollama</span>
+    <input 
+    id="ollama-url" 
+    type="text" 
+    placeholder="http://localhost:11434"
+    title="URL do Ollama"
+    style="width:180px; font-size:12px; padding:2px 6px; border-radius:4px; border:1px solid #444; background:#222; color:#fff;"
+    />
+    <button id="reload-models" title="Recarregar modelos" style="background:none; border:none; cursor:pointer; color:#fff;">🔄</button>
+    <div class="top-divider"></div>
+    <span class="top-label">Modelo</span>
     <select id="model-select">
-        <option>qwen2.5:7b</option>
+    <option>Carregando...</option>
     </select>
 
     <div class="top-divider"></div>
@@ -71,7 +83,7 @@
         <section id="chat-box">
 
             <div class="welcome">
-                <h2>ROCKS AI</h2>
+                <h2>ROCK AI</h2>
                 <p>
                     Olá! Eu sou seu assistente virtual.<br>
                     Como posso ajudar hoje?

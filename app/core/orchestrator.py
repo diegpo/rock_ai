@@ -1,4 +1,5 @@
 import json
+from xml.parsers.expat import model
 from llm.provider import LLMProvider
 from core.ai_planner import AiPlanner
 from tools.tool_registry import ToolRegistry
@@ -83,3 +84,8 @@ class Orchestrator:
                 results.append(f"⚠️ Ferramenta '{tool_name}' não encontrada no registry")
 
         return "\n".join(results) if results else "Nenhuma ferramenta executada."
+    
+    def switch_ollama(self, url: str = None, model: str = None) -> str:
+        """Troca URL e modelo do Ollama dinamicamente."""
+        return self.llm.switch("ollama", url=url, model=model)
+
