@@ -269,3 +269,14 @@ body {
         padding: 10px;
     }
 }
+
+.typing-message {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.typing-gif {
+    width: 96px;
+    height: 96px;
+}
