@@ -187,8 +187,9 @@ function criarTyping() {
     typing.className = 'message bot-message typing';
 
     typing.innerHTML = `
-        <div class="message-content">
-            ⏳ ROCK AI pensando...
+        <div class="message-content typing-message">
+            <img src="/static/img/paperplane.gif" alt="Loading" class="typing-gif">
+            <span>ROCK AI pensando...</span>
         </div>
     `;
 
