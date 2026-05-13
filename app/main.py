@@ -1,10 +1,55 @@
-from interfaces.slack.slack_app import app as slack_app
-from interfaces.web.app import app as web_app
-
+import os
+import sys
+import logging
 import time
 import requests
 import threading
-import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# ─── Configura logging para arquivo + console ─────────────────
+log_file = os.getenv("ROCKS_LOG_FILE", "logs/rocks_ia.log")
+os.makedirs(os.path.dirname(log_file), exist_ok=True)
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    handlers=[
+        logging.FileHandler(log_file, encoding="utf-8"),
+        # SEM StreamHandler aqui — o PrintToLog já cuida do terminal
+    ]
+)
+
+
+# Redireciona print() para o log
+class PrintToLog:
+    def __init__(self, logger):
+        self.logger = logger
+        self.terminal = sys.__stdout__
+
+    def write(self, msg):
+        # Flask/click pode mandar bytes — converte para str
+        if isinstance(msg, bytes):
+            msg = msg.decode("utf-8", errors="replace")
+        if msg.strip():
+            self.terminal.write(msg)
+            self.logger.info(msg.strip())
+
+    def flush(self):
+        self.terminal.flush()
+
+    # Necessário para compatibilidade com algumas libs
+    def isatty(self):
+        return False
+
+
+sys.stdout = PrintToLog(logging.getLogger("rocks_ia"))
+
+# ─── Imports das interfaces (após configurar o log) ───────────
+from interfaces.slack.slack_app import app as slack_app
+from interfaces.web.app import app as web_app
 
 
 def wait_ollama():

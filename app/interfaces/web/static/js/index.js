@@ -188,7 +188,7 @@ function criarTyping() {
 
     typing.innerHTML = `
         <div class="message-content">
-            ⏳ ROCKS AI pensando...
+            ⏳ ROCK AI pensando...
         </div>
     `;
 
