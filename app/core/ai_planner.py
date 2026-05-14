@@ -29,8 +29,18 @@ class AiPlanner:
         if history_block:
             sections.append(f"HISTÓRICO DA CONVERSA:\n{history_block}")
 
+        
+        
+        """if rag_context:
+            sections.append(f"BASE DE CONHECIMENTO DISPONÍVEL:\n{rag_context}")"""
+
         if rag_context:
-            sections.append(f"BASE DE CONHECIMENTO DISPONÍVEL:\n{rag_context}")
+            sections.append(
+                "BASE DE CONHECIMENTO OFICIAL (USE COMO FONTE PRINCIPAL):\n"
+                f"{rag_context}"
+            )    
+
+
 
         # Contexto técnico extraído (URLs, erros, etc.)
         ctx = context or {}
@@ -44,7 +54,11 @@ class AiPlanner:
         if tech_parts:
             sections.append("CONTEXTO TÉCNICO DETECTADO:\n" + "\n".join(tech_parts))
 
-        sections.append(f"ENTRADA DO USUÁRIO:\n{user_input}")
+        """sections.append(f"ENTRADA DO USUÁRIO:\n{user_input}")"""
+        sections.append(
+            f"PERGUNTA DO USUÁRIO "
+            f"(RESPONDA USANDO A BASE OFICIAL):\n{user_input}"
+        )
 
         body = "\n\n".join(sections)
 
@@ -55,7 +69,11 @@ Seu nome é Rock AI.
 
 INSTRUÇÕES:
 - Use o histórico para manter continuidade da conversa.
-- Use a base de conhecimento para responder com precisão quando disponível.
+- Quando existir BASE DE CONHECIMENTO OFICIAL, utilize PRIORITARIAMENTE essas informações.
+- Não ignore informações recuperadas pelo sistema RAG.
+- Responda com base no conteúdo técnico encontrado.
+- Se uma porta, parâmetro, caminho ou configuração estiver presente na base, informe explicitamente.
+- Evite respostas genéricas quando existir contexto técnico disponível.
 - Use o contexto técnico detectado (URL, erros) para personalizar a resposta.
 - Se for um erro real, gere um plano de correção em JSON.
 - Se for dúvida, explique com base nos documentos disponíveis.
